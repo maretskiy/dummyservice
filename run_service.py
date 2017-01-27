@@ -2,24 +2,28 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 import datetime as dt
 import json
 from SocketServer import ThreadingMixIn
+import sys
 
 
 class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        data = {'datetime_iso': dt.datetime.now().isoformat()}
-        self.wfile.write(json.dumps(data, indent=2))
+        data = {'time': dt.datetime.now().isoformat()}
+        body = json.dumps(data, indent=2)
+        response = (
+            "HTTP/1.0 200 OK\r\n"
+            "Content-Type: application/json\r\n"
+            "Content-Length: %i\r\n\r\n%s" % (len(body), body))
+        self.wfile.write(response)
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     pass
 
 
-PORT = 8888
+def main(host, port):
+    ThreadedHTTPServer((host, port), Handler).serve_forever()
 
 
 if __name__ == '__main__':
-    server = ThreadedHTTPServer(('0.0.0.0', PORT), Handler)
-    server.serve_forever()
+    main('0.0.0.0', 8888)
