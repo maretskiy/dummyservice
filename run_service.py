@@ -2,7 +2,6 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 import datetime as dt
 import json
 from SocketServer import ThreadingMixIn
-import sys
 
 
 class Handler(BaseHTTPRequestHandler):
